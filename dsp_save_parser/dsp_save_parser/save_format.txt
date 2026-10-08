@@ -799,7 +799,14 @@ Player {
   StorageComponent package
   DeliveryPackage deliveryPackage // version >= 3
   PlayerNavigation navigation // version >= 1
-  uint8 playerV7Extra[96] // version >= 7 // new in 0.10.35.29104; 96 opaque bytes observed between PlayerNavigation and sandCount on a fresh save. Hexdump shows the region contains 4 count+KeyValuePair<int32,int32>[] groups (counts 0, 4, 1, 5) with mixed planet-id (103, 104) and item-id (603, 604, 1001, 1002, 1004) keys — likely a new per-player "starter inventory" / "tutorial-progress" / "mission tracking" structure introduced with the 0.10.35 Combat 2.0 / preset overhaul. Identity not yet matched to a decompiled field name; treated as opaque bytes so the rest of the save can still be parsed.
+  int32 extraCount0 // version >= 7 (0.10.35 per-player key/value groups; fresh save had counts 0,4,1,5)
+  KeyValuePair<int32, int32> extra0[extraCount0] // version >= 7
+  int32 extraCount1 // version >= 7
+  KeyValuePair<int32, int32> extra1[extraCount1] // version >= 7
+  int32 extraCount2 // version >= 7
+  KeyValuePair<int32, int32> extra2[extraCount2] // version >= 7
+  int32 extraCount3 // version >= 7
+  KeyValuePair<int32, int32> extra3[extraCount3] // version >= 7
   int64 sandCount // changed to int64 after version 4
 }
 
@@ -1880,7 +1887,7 @@ PowerSystem {
 }
 
 PowerGeneratorComponent {
-  int32 version = 7
+  int32 version = 8
   int32 id
   int32 entityId
   uint8 subId  // version >= 1
@@ -1892,7 +1899,7 @@ PowerGeneratorComponent {
   boolean geothermal  // version >= 3
   int64 genEnergyPerTick
   int64 useFuelPerTick
-  int16 fuelMask
+  int32 fuelMask // WIDENED to int32 in version 8 (inferred from 2 extra bytes)
   int64 fuelEnergy
   int16 curFuelId
   int16 fuelId
@@ -1901,6 +1908,7 @@ PowerGeneratorComponent {
   boolean productive  // version >= 2
   boolean incUsed // version >= 7
   uint8 fuelIncLevel  // version >= 2
+  uint8 v8ExtraA // version >= 8, 1 unknown byte inferred from record layout
   int64 fuelHeat
   int32 catalystId
   int32 catalystPoint
@@ -1912,6 +1920,7 @@ PowerGeneratorComponent {
   float32 ionEnhance
   float32 gthStrength // version >= 3
   float32 gthAffectStrength // version >= 5
+  uint8 v8ExtraB[8] // version >= 8, 8 unknown bytes inferred from record layout (zeros in observed records)
   float32 x
   float32 y
   float32 z
